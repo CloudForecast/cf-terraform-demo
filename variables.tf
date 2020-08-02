@@ -39,3 +39,4 @@ variable "db_password" {
   description = "RDS database password"
   default     = "password123"
 }
+

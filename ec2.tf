@@ -35,6 +35,14 @@ resource "aws_security_group" "default" {
   }
 }
 
+variable "tags" {
+  description = "The tags for this resource."
+  validation {
+    condition = length(var.tags) > 0 && contains(["j-mark", "l-duke"], var.tags.contact) && contains(["dev", "prod"], var.tags.env) && contains(["cart", "search", "cart:search"], var.tags.service)
+    error_message = "Invalid resource tags applied."
+  }
+}
+
 resource "aws_instance" "cart" {
   connection {
     type = "ssh"
@@ -61,11 +69,7 @@ resource "aws_instance" "cart" {
     ]
   }
 
-  tags = {
-    contact = "j-mark"
-    env = "dev"
-    service = "cart"
-  }
+  tags = var.tags
 }
 
 resource "aws_instance" "search" {
