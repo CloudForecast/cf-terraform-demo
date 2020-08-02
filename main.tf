@@ -11,22 +11,14 @@ provider "aws" {
 resource "aws_vpc" "default" {
   cidr_block = "10.0.0.0/16"
 
-  tags = {
-    contact = "j-mark"
-    env = "dev"
-    service = "cart:search"
-  }
+  tags = var.tags
 }
 
 # Create an internet gateway for outside access
 resource "aws_internet_gateway" "default" {
   vpc_id = aws_vpc.default.id
 
-  tags = {
-    contact = "j-mark"
-    env = "dev"
-    service = "cart:search"
-  }
+  tags = var.tags
 }
 
 # Give internet access to the VPC
@@ -42,11 +34,7 @@ resource "aws_subnet" "default" {
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
 
-  tags = {
-    contact = "j-mark"
-    env = "dev"
-    service = "cart:search"
-  }
+  tags = var.tags
 }
 
 # Add a public key
@@ -54,9 +42,5 @@ resource "aws_key_pair" "auth" {
   key_name   = var.key_name
   public_key = file(var.public_key_path)
 
-  tags = {
-    contact = "j-mark"
-    env = "dev"
-    service = "cart:search"
-  }
+  tags = var.tags
 }
