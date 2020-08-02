@@ -1,8 +1,20 @@
+terraform {
+  required_version = ">= 0.12"
+  experiments = [variable_validation]
+}
+
+# Create a subnet for our elb and ec2 instance
+resource "aws_subnet" "default" {
+  vpc_id                  = var.aws_vpc_id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+}
+
 # A security group for the ELB so it's accessible via the web
 resource "aws_security_group" "elb" {
   name        = "terraform_example_elb"
   description = "Used in the terraform"
-  vpc_id      = aws_vpc.default.id
+  vpc_id      = var.aws_vpc_id
 
   # HTTP access from anywhere
   ingress {
@@ -46,7 +58,7 @@ resource "aws_elb" "default" {
 resource "aws_security_group" "default" {
   name        = "terraform_example"
   description = "Used in the terraform"
-  vpc_id      = aws_vpc.default.id
+  vpc_id      = var.aws_vpc_id
 
   # SSH access from anywhere
   ingress {
@@ -88,7 +100,7 @@ resource "aws_instance" "default" {
 
   ami = var.aws_amis[var.aws_region]
 
-  key_name = aws_key_pair.auth.key_name
+  key_name = var.aws_key_pair_name
 
   vpc_security_group_ids = [aws_security_group.default.id]
 

@@ -10,15 +10,11 @@ provider "aws" {
 # Create a VPC for all our resources
 resource "aws_vpc" "default" {
   cidr_block = "10.0.0.0/16"
-
-  tags = var.tags
 }
 
 # Create an internet gateway for outside access
 resource "aws_internet_gateway" "default" {
   vpc_id = aws_vpc.default.id
-
-  tags = var.tags
 }
 
 # Give internet access to the VPC
@@ -28,19 +24,21 @@ resource "aws_route" "internet_access" {
   gateway_id             = aws_internet_gateway.default.id
 }
 
-# Create a subnet for our elb and ec2 instance
-resource "aws_subnet" "default" {
-  vpc_id                  = aws_vpc.default.id
-  cidr_block              = "10.0.1.0/24"
-  map_public_ip_on_launch = true
-
-  tags = var.tags
-}
-
 # Add a public key
 resource "aws_key_pair" "auth" {
   key_name   = var.key_name
   public_key = file(var.public_key_path)
+}
 
-  tags = var.tags
+module "ec2_with_tags" {
+  source = "./ec2-with-tags"
+  aws_vpc_id = aws_vpc.default.id
+  aws_key_pair_name = aws_key_pair.auth.key_name
+  aws_region = var.aws_region
+  private_key_path = var.private_key_path
+  tags = {
+    contact = "j-mark"
+    env = "dev"
+    service = "cart"
+  }
 }

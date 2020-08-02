@@ -1,3 +1,3 @@
 output "url" {
-  value = aws_elb.default.dns_name
+  value = module.ec2_with_tags.url
 }
