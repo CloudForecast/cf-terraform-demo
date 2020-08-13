@@ -1,7 +1,7 @@
 variable "tags" {
   description = "The tags for this resource."
   validation {
-    condition = length(var.tags) > 0 && contains(["j-mark", "l-duke"], var.tags.contact) && contains(["dev", "prod"], var.tags.env) && contains(["cart", "search", "cart:search"], var.tags.service)
+    condition = length(var.tags) > 0 && contains(["j-mark", "l-duke"], var.tags.contact) && var.tags.env != null && contains(["dev", "prod"], var.tags.env) && contains(["cart", "search", "cart:search"], var.tags.service)
     error_message = "Invalid resource tags applied."
   }
 }
